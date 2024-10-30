@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html lang = "en">
 <head>
-  <meta charset = "UTF-8">
-  <meta http-equiv = "X-UA-Compatible" content = "IE=edge">
-  <meta name = "viewport" content = "width-device-width, initial-scale=1.0">
-  <title>MYVIZ</title>
+  <meta charset = "utf-8">
+  <title>D3: SVG Bar Chart</title>
+  <script type= "text/javascript" src= "/d3.v7.js"></script>
+  <style type= "text/css">
+    </style>
 </head>
 <body>
-      <div class = "container">
-        <h1>About Me</h1>
-        <p>Hello, my Name is Aidan Gardner</p>
-        <p>Favorite Color: Purple</p>
-        <p>Favorite animal: Cat</p>
-        <a href = "index.html"><h2>Click here to return to main page</h2></a>
-      </div>
-</body>
+      <script type= "text/javascript">
+
+          //Displays the width and height of each bar
+          var w = 100
+          var h = 100
+          var barPadding = 2;
+
+        var dataset = [10, 13, 25, 27, 9, 46]
+
+          //Creating an SVG element
+          var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+          svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, i) {
+                        return i * (w /dataset.length);
+            })
+            .attr("y", function(d) {
+                        return h - (d * 4);
+            })
+
+            .attr("fill", function(d) {
+                          return "rgb(0, 0, " + Math.round(d * 10) + ")";
+            });
+        //Create the labels
+        svg.selectAll("text")
+          .data(dataset)
+          .enter()
+          .append("text")
+          .text(function(d) {
+                        return d;
+          })
+          .attr("text-anchor", "middle")
+          .attr("x", function(d, i) {
+                        return i * (w /dataset.length) + (w / dataset.length - barPadding) / 2;
+          })
+          .attr("y", function(d) {
+                        return h - (d * 4) + 14;
+          })
+          .attr("font-family", "sans-serif")
+          .attr("font-size", "11px")
+          .attr("fill", white");
+      </script>
+  </body>
 </html>
