@@ -1,24 +1,66 @@
 <!DOCTYPE html>
-<html lang ="en">
-        <head>
-                <meta charset="utf-8">
-                <title>D3: CSV to SVG Bar chart with labels(centered)</title>
-                <script type="text/javascript" src="/de.v7.js"></script>
-                <style type="text/css">
-                        /* Add styling for the chart */
-                </style>
-        </head>
-        <body>
-                <script type="text/javascript">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        canvas {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSV Data Chart</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
 
-                        //Width and Height
-                        var w = 500;
-                        var h = 100;
-                        var barPadding = 1; //Padding between bars
+    <script>
+        // Fetch the CSV file
+        fetch('data.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                // Parse the CSV
+                Papa.parse(csvData, {
+                    header: true,
+                    dynamicTyping: true,
+                    complete: function(results) {
+                        // Extract data
+                        const labels = results.data.map(row => row['Label']); // Replace 'Label' with your CSV column header
+                        const values = results.data.map(row => row['Value']); // Replace 'Value' with your CSV column header
 
-                        <svg id="BarChart"></svg>
-
-                      <script src = "https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
-                      <script src = "datascript.js"></script>
-        </body>
+                        // Create the chart
+                        const ctx = document.getElementById('myChart').getContext('2d');
+                        new Chart(ctx, {
+                            type: 'bar', // Change to 'line', 'pie', etc. as needed
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Dataset Label', // Customize as needed
+                                    data: values,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+    </script>
+</body>
 </html>
+
