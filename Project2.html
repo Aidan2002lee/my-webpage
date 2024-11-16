@@ -3,63 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <title>Dog Breeds</title>
+    <script src = "https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
         }
-        canvas {
-            margin: 20px auto;
+        .bar {
+            fill: purple;
+            transition: fill 0.3s ease;
+        }
+        .bar:hover {
+            fill: green;
+        }
+        .axis text {
+            font-size: 12px;
+        }
+        .axis path, .axis line {
+            fill: none;
+            shape-rendering crispEdges;
         }
     </style>
 </head>
 <body>
     <h1>CSV Data Chart</h1>
-    <canvas id="myChart" width="400" height="200"></canvas>
+    <svg id="myChart" width="800" height="400"></svg>
 
     <script>
         // Fetch the CSV file
-        fetch('data.csv')
-            .then(response => response.text())
-            .then(csvData => {
-                // Parse the CSV
-                Papa.parse(csvData, {
-                    header: true,
-                    dynamicTyping: true,
-                    complete: function(results) {
-                        // Extract data
-                        const labels = results.data.map(row => row['Label']); // Replace 'Label' with your CSV column header
-                        const values = results.data.map(row => row['Value']); // Replace 'Value' with your CSV column header
+        const margin = {top: 100, right: 50, bottom: 30, left: 60 }
+        const width = 800 - margin.eft - margin.right;
+        const height = 400 - margin.top - margin.bottom;
 
-                        // Create the chart
-                        const ctx = document.getElementById('myChart').getContext('2d');
-                        new Chart(ctx, {
-                            type: 'bar', // Change to 'line', 'pie', etc. as needed
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Dataset Label', // Customize as needed
-                                    data: values,
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
+        const svg = d3.select("barchart")
+            .attr("width", width + margin.eft + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", 'translate(${margin.left}, ${margin.top})');
+         // Load CSV data
+        d3.csv("dog_breeds.csv").then(data => {
+            // Parse data
+            data.forEach(d => {
+                d.AverageWeight = +d.AverageWeight; // Convert to number
             });
+
+            // Set up scales
+            const xScale = d3.scaleBand()
+                .domain(data.map(d => d.Breed))
+                .range([0, width])
+                .padding(0.2);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.AverageWeight)])
+                .range([height, 0]);
+
+            // Add axes
+            const xAxis = d3.axisBottom(xScale);
+            const yAxis = d3.axisLeft(yScale);
+
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(xAxis)
+                .selectAll("text")
+                .attr("transform", "rotate(-45)")
+                .style("text-anchor", "end");
+
+            svg.append("g")
+                .call(yAxis);
+
+            // Add bars
+            svg.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => xScale(d.Breed))
+                .attr("y", d => yScale(d.AverageWeight))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => height - yScale(d.AverageWeight))
+                .on("mouseover", function(event, d) {
+                    d3.select(this).attr("fill", "orange");
+                    tooltip.style("visibility", "visible")
+                        .text(`${d.Breed}: ${d.AverageWeight} kg`);
+                })
+                .on("mousemove", function(event) {
+                    tooltip.style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this).attr("fill", "steelblue");
+                    tooltip.style("visibility", "hidden");
+                });
+
+            // Add tooltip
+            const tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("background", "white")
+                .style("border", "1px solid black")
+                .style("padding", "5px")
+                .style("border-radius", "3px")
+                .style("visibility", "hidden")
+                .style("font-size", "12px");
+        }).catch(error => console.error("Error loading CSV data:", error));
     </script>
 </body>
 </html>
