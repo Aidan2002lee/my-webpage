@@ -170,27 +170,44 @@
 ,8
 ,20
  ];
-			
+			const width = 1000;
+			const height = 1000;
+			const margin = { top: 20, right: 54, bottom: 4, left: 24 }
 			//Create SVG element
 			var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
 
+			fetch('Dog Breeds Around The World.csv')
+			  .then(response => response.text())
+			  .then(data => {
+			    // Parse CSV data using D3
+			    const parsedData = d3.csvParse(data, d => ({
+			      category: d.Category,
+			      value: +d.Value
+			    }));
+
 			//Set up Scales
 			const x = d3.scaleBand()
+				  .domain(parsedData.map(d => d.category))
+				  .range([margin.left, width - margin.left])
+				  .padding(0.1);
+				
 
 			const y = d3.scaleLinear()
+				  .domain([0, d3.max(parsedData, d => d.value]).nice()
+				  .range([height - margin.bottom, margin.top]);
 
 			// Add x-axis
 			svg.append("g")
-			.attr("transform")
-			.call(d3(x));
+			.attr("transform", 'translate(0, ${height - margin.bottom})')
+			.call(d3.axisBottom(x));
 
 			// Add y-axis
 			svg.append("g")
-			.attr("transform")
-			.call(d3(y));
+			.attr("transform", translate(${margin.left},0)')
+			.call(d3.axisLeft(y));
 			
 			// Add a circle to the svg for each datum in the dataset
 			var circles = svg.selectAll("circle")
