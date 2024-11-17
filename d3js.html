@@ -2,97 +2,71 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Dog Breeds</title>
-		<script src = "https://d3js.org/d3.v7.min.js"></script>
-		<style>
-			/* No style rules here yet */
-			div.bar {
-			display: inline-block;
-			width: 20px;
-			margin-right: 2px;
-			background-color: purple;
+		<title>D3: Using color in SVG</title>
+		<script type="text/javascript" src="/d3.v7.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */		
 		</style>
 	</head>
 	<body>
-		<script>
+		<script type="text/javascript">
+			
 			//Width and height
 			var w = 500;
-			var h = 300;
-			var padding = 20;
+			var h = 50;
 			
-			var dataset, xScale, yScale;
-
-			var formatTime = d3.timeFormat("%B %d");
-
-
-			var rowConverter = function(d) {
-				return {
-					"Intelligence Rating (1-10)": parseInt(d["Intelligence Rating (1-10)"]),
-					"Training Difficulty (1-10)": parseInt(d["Training Difficulty (1-10)"])
-				};
-			}
-
-			d3.csv("Dog Breeds Around The World.csv", rowConverter)
-
-				.then(function(data) {
-					console.log(data);
-
-					dataset = data;
-					visualizeFunction();
-				})
-				.catch(function(error){
-					console.error(error);
-				})
-			// Uses the loaded dataset 
-			var visualizeFunction = function() {
-				
-					//Create scale time function
-					xScale = d3.scaleTime()
-								.domain([
-										d3.min(dataset, d => d["Intelligence Rating (1-10)"]), 
-										d3.max(dataset, d => d["Intelligence Rating (1-10)"])  
-									])
-								.range([padding, w - padding]);
-
-					//Create scale linear function			   
-					yScale = d3.scaleLinear()
-								.domain([
-										d3.min(dataset, d => d["Training Difficulty (1-10)"]),
-										d3.max(dataset, d => d["Training Difficulty (1-10)"])
-									])
-								.range([h - padding, padding]);
+			//Data
+			var dataset = [ 4,25
+,21
+,45
+,36
+,42
+,12
+,31
+,15
+,25
+,6.5
+,10
+,24
+,10
+,22
+,43
+,4
+,50
+,43
+,17
+,6
+,37
+,9
+,34
+ ];
 			
-	
-					//Create SVG element
-					var svg = d3.select("body")
-								.append("svg")
-								.attr("width", w)
-								.attr("height", h);
-
-					//Generate date labels first, so they are in back
-					svg.selectAll("text")
-					.data(dataset)
-					.enter()
-					.append("text")
-					.text(d => d["Intelligence Rating (1-10)"])
-					.attr("x", d => xScale(d["Intelligence Rating (1-10)"]) + 4)
-					.attr("y", d => yScale(d["Training Difficulty (1-10)"]) + 4)
-					.attr("font-family", "sans-serif")
-					.attr("font-size", "11px")
-					.attr("fill", "#bbb");
-
-					//Generate circles last, so they appear in front
-					svg.selectAll("circle")
-					.data(dataset)
-					.enter()
-					.append("circle")
-					.attr("cx", d => xScale(d["Intelligence Rating (1-10)"]))
-					.attr("cy", d => yScale(d["Training Difficulty (1-10)"]))
-					.attr("r", 2);
-			}
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
 			
-			
-				
+			// Add a circle to the svg for each datum in the dataset
+			var circles = svg.selectAll("circle")
+			    .data(dataset)
+			    .enter()
+			    .append("circle");
+
+			// Set the cx,cy,r,fill attributes for the circles
+			circles.attr("cx", function(d, i) {
+						return (i * 50) + 25;   // x position of center of circle based on the index of the data value
+					})
+				   .attr("cy", h/2)             // y position of center of circle based on half svg height
+				   .attr("r", function(d) {     
+						return d;               
+				   })
+				   .attr("fill", "purple")      // all circles filled with yellow
+				   .attr("stroke", "orange")
+				   .attr("stroke-width", function(d) {
+						return d/2;
+				   });
+
 		</script>
 	</body>
 </html>
