@@ -176,6 +176,21 @@
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
+
+			//Set up Scales
+			const x = d3.scaleBand()
+
+			const y = d3.scaleLinear()
+
+			// Add x-axis
+			svg.append("g")
+			.attr("transform")
+			.call(d3(x));
+
+			// Add y-axis
+			svg.append("g")
+			.attr("transform")
+			.call(d3(y));
 			
 			// Add a circle to the svg for each datum in the dataset
 			var circles = svg.selectAll("circle")
