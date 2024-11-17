@@ -5,20 +5,20 @@
         <title>Dog Breeds</title>
         <script type = "text/javascript" src="/d3.v7.js"></script>
         <style type = "text/css">
-            /* No style rules here yet */
+                /* No style rules here yet */
         
         </style>
 </head>
-<body>
+    <body>
     <h1>Scatterplot between Intelligence and Training Difficulty</h1>
     
 
         <script type = "text/javascript">
 
-            d3.csv("data/Dog Breeds Around The World.csv").then(data => {
-                //Parse data
-                data.forEach(d => {
-                    d.Value = +d.Value;
+                d3.csv("data/Dog Breeds Around The World.csv").then(data => {
+                        //Parse data
+                        data.forEach(d => {
+                        d.Value = +d.Value;
                 });
             });
             //Width and Height
