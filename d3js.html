@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Dog Breeds</title>
-		<script type="text/javascript" src="/d3.v7.js"></script>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
 		<style type="text/css">
 			/* No style rules here yet */		
 		</style>
@@ -18,13 +18,17 @@
 			
 			var dataset, xScale, yScale;
 
-			var rowConverter = function(d) {
-				return
-					Intelligence Rating (1-10): parseInt(d.Intelligence Rating (1-10)),
-					Training Difficulty (1-10): parseInt(d.Training Difficulty (1-10))
-			};
+			var formatTime = d3.timeFormat("%B %d");
 
-			d3.csv("Dog Breeds Around The World.csv", rowConverter)
+
+			var rowConverter = function(d) {
+				return {
+					"Intelligence Rating (1-10)": parseInt(d["Intelligence Rating (1-10)"]),
+					"Training Difficulty (1-10)": parseInt(d["Training Difficulty (1-10)"])
+			};
+		};
+
+			d3.csv("data/Dog Breeds Around The World.csv", rowConverter)
 
 				.then(function(data) {
 					console.log(data);
@@ -41,16 +45,16 @@
 					//Create scale time function
 					xScale = d3.scaleTime()
 								.domain([
-										d3.min(dataset, function(d) { return d.Intelligence Rating (1-10); }), 
-										d3.max(dataset, function(d) { return d.Intelligence Rating (1-10); })  
+										d3.min(dataset, d => d["Intelligence Rating (1-10)"]), 
+										d3.max(dataset, d => d["Intelligence Rating (1-10)"])  
 									])
 								.range([padding, w - padding]);
 
 					//Create scale linear function			   
 					yScale = d3.scaleLinear()
 								.domain([
-										d3.min(dataset, function(d) { return d.Training Difficulty (1-10); }),
-										d3.max(dataset, function(d) { return d.Training Difficulty (1-10); })
+										d3.min(dataset, d => d["Training Difficulty (1-10)"]),
+										d3.max(dataset, d => d["Training Difficulty (1-10)"])
 									])
 								.range([h - padding, padding]);
 			
@@ -66,16 +70,9 @@
 					.data(dataset)
 					.enter()
 					.append("text")
-					.text(function(d) {
-							return formatTime(d.Intelligence Rating (1-10)); // Call function to format time as month followed by day of month
-					})
-					.attr("x", function(d) {
-						    console.log("IQ: " + d.Intelligence Rating (1-10) + " scaled: " + xScale(d.Intelligence Rating (1-10)));
-							return xScale(d.Integlligence Rating (1-10)) + 4;
-					})
-					.attr("y", function(d) {
-							return yScale(d.Training Difficulty (1-10)) + 4;
-					})
+					.text(d => d["Intelligence Rating (1-10)"])
+					.attr("x", d => xScale(d["Intelligence Rating (1-10)"]) + 4)
+					.attr("y", d => yScale(d["Training Difficulty (1-10)"]) + 4)
 					.attr("font-family", "sans-serif")
 					.attr("font-size", "11px")
 					.attr("fill", "#bbb");
@@ -85,14 +82,10 @@
 					.data(dataset)
 					.enter()
 					.append("circle")
-					.attr("cx", function(d) {
-							return xScale(d.Intelligence Rating (1-10));
-					})
-					.attr("cy", function(d) {
-							return yScale(d.Training Difficulty (1-10));
-					})
-					.attr("r", 2);
-			}
+					.attr("cx", d => xScale(d["Intelligence Rating (1-10)"]))
+					.attr("cy", d => yScale(d["Training Difficulty (1-10)"]))
+					.attr("r", 5);
+			};
 			
 			
 		</script>
