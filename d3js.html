@@ -25,8 +25,8 @@
 				return {
 					"Intelligence Rating (1-10)": parseInt(d["Intelligence Rating (1-10)"]),
 					"Training Difficulty (1-10)": parseInt(d["Training Difficulty (1-10)"])
-			};
-		};
+				};
+			}
 
 			d3.csv("Dog Breeds Around The World.csv", rowConverter)
 
@@ -85,7 +85,7 @@
 					.attr("cx", d => xScale(d["Intelligence Rating (1-10)"]))
 					.attr("cy", d => yScale(d["Training Difficulty (1-10)"]))
 					.attr("r", 5);
-			};
+			}
 			
 			
 		</script>
