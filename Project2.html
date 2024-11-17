@@ -170,7 +170,11 @@
 ,8
 ,20
  ];
-			
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
 			
 			// Add a circle to the svg for each datum in the dataset
 			var circles = svg.selectAll("circle")
