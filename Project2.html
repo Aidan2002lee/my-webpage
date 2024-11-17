@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog Breeds</title>
     <script type = "text/javascript" src="/d3.v7.js"></script>
     <style type = "text/css">
@@ -15,6 +14,12 @@
 
         <script type = "text/javascript">
 
+            d3.csv("data/Dog Breeds Around The World.csv").then(data => {
+                //Parse data
+                data.forEach(d => {
+                    d.Value = +d.Value;
+                });
+            });
             //Width and Height
             var w = 500;
             var h = 300;
@@ -72,7 +77,7 @@
                 })
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "11px")
-                .attr("fill", "red");
+                .attr("fill", "blue");
             
         </script>
                          
